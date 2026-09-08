@@ -1,13 +1,13 @@
 # Diseño y Desarrollo de una API REST en un Sistema de Gestión de Préstamos
 
-El sistema de gestión de préstamos de una institución financiera necesita una API REST que permita a los clientes consultar sus préstamos y realizar nuevos préstamos. La API debe persistir los datos en una base de datos H2 y contar con documentación utilizando Swagger. Los préstamos tienen los siguientes atributos: ID, monto, tasa de interés, fecha de inicio, fecha de fin, estado (pendiente, aprobado, rechazado). La API debe validar que el monto del préstamo sea mayor a cero y que la tasa de interés sea un valor entre 0 y 100. En caso de error, la API debe devolver un mensaje descriptivo. El sistema debe manejar una carga de hasta 100 solicitudes por segundo con una latencia máxima de 200ms.
+En un sistema de gestión de préstamos, se requiere desarrollar una API REST que permita a los clientes solicitar, consultar y aprobar préstamos. La API debe ser idempotente, manejar errores de forma adecuada y estar documentada con Swagger. Los préstamos tienen los siguientes atributos: ID, monto, tasa de interés, fecha de solicitud, estado (pendiente, aprobado, rechazado). La API debe interactuar con una base de datos H2 para la persistencia de los datos.
 
 ## Informacion General
 
 | Campo | Valor |
 |-------|-------|
-| **Tema** | Java Spring Boot REST API |
-| **Nivel** | junior-l2 |
+| **Tema** | java-spring-boot-rest-api |
+| **Nivel** | junior-l1 |
 | **Tipo** | practical |
 | **Tiempo estimado** | 8 horas |
 
@@ -21,11 +21,11 @@ El sistema de gestión de préstamos de una institución financiera necesita una
 
 **Instrucciones:**
 
-- Asegúrate de tener instalado para ejecutar el proyecto: JDK 17+, Maven 3.9+, IDE con soporte Java.
+- Asegúrate de tener instalado para ejecutar el proyecto: Un IDE o editor de código.
 - Copia todo el contenido del campo **Código Base** de este reto — incluyendo el texto de instrucciones que aparece al inicio.
 - Abre un asistente de IA (Claude en claude.ai, ChatGPT o Gemini — se recomienda Claude), pega el contenido copiado en el chat y envíalo.
 - El asistente analizará los archivos, corregirá errores y generará un archivo ZIP descargable. Descárgalo y extráelo en la carpeta donde quieras trabajar.
-- Ejecuta `mvn compile` en la raíz. Si no hay errores, estás listo.
+- Verifica que el proyecto arranca sin errores.
 
 **Entregable:** El proyecto compila/arranca sin errores.
 
@@ -38,104 +38,87 @@ El sistema de gestión de préstamos de una institución financiera necesita una
 
 </details>
 
-### Fase 1: Definición del Modelo de Préstamo
+### Fase 1: Definición del Dominio y Requisitos Funcionales
 
-**Objetivo:** Definir el modelo de datos para los préstamos y sus validaciones.
+**Objetivo:** Identificar los actores, fuentes y sumideros del dominio, así como las propiedades operativas y umbrales numéricos relevantes.
 
 **Tiempo estimado:** 2 horas
 
 **Instrucciones:**
 
-- Identificar los atributos necesarios para representar un préstamo.
-- Definir las validaciones para el monto y la tasa de interés.
+- Enumera los actores involucrados en el proceso de solicitud y aprobación de préstamos.
+- Define las fuentes y sumideros de datos en el dominio.
+- Establece los umbrales numéricos relevantes para el dominio (ej. monto máximo de préstamo, tasa de interés máxima).
+- Identifica las propiedades operativas del dominio (ej. idempotencia en la solicitud de préstamo).
 
-**Entregable:** Modelo de datos para préstamos con validaciones.
+**Entregable:** Documento que describe el dominio, los actores, las fuentes y sumideros, los umbrales numéricos y las propiedades operativas.
 
 <details>
 <summary>Pistas de conocimiento</summary>
 
-- Considera los diferentes estados que puede tener un préstamo.
-- Piensa en los posibles errores que pueden ocurrir al validar los atributos.
+- Considera las diferentes fases del proceso de préstamo y cómo se relacionan.
+- Piensa en los posibles modos de falla y cómo manejarlos.
 
 </details>
 
-### Fase 2: Implementación de la API REST
+### Fase 2: Diseño de la API REST
 
-**Objetivo:** Implementar la API REST que permite consultar y crear préstamos.
+**Objetivo:** Diseñar la estructura y endpoints de la API REST, asegurando idempotencia y manejo de errores.
 
 **Tiempo estimado:** 3 horas
 
 **Instrucciones:**
 
-- Diseñar las rutas y métodos HTTP para consultar y crear préstamos.
-- Implementar la persistencia de los datos en la base de datos H2.
+- Diseña los endpoints necesarios para solicitar, consultar y aprobar préstamos.
+- Asegura que la API sea idempotente en la solicitud de préstamos.
+- Define cómo manejar los errores comunes en el dominio (ej. préstamo ya aprobado, monto inválido).
 
-**Entregable:** API REST funcional con persistencia en H2.
+**Entregable:** Documento que describe los endpoints de la API, incluyendo la estructura de las solicitudes y respuestas, y el manejo de errores.
 
 <details>
 <summary>Pistas de conocimiento</summary>
 
-- Recuerda que la API debe manejar una carga de hasta 100 solicitudes por segundo con una latencia máxima de 200ms.
-- Piensa en cómo manejar los errores de validación en la API.
+- Considera el uso de códigos de estado HTTP adecuados para cada situación.
+- Piensa en cómo asegurar la idempotencia en la solicitud de préstamos.
 
 </details>
 
-### Fase 3: Documentación de la API con Swagger
+### Fase 3: Implementación y Documentación de la API
 
-**Objetivo:** Documentar la API REST utilizando Swagger.
+**Objetivo:** Implementar la API REST y documentarla con Swagger.
 
-**Tiempo estimado:** 2 horas
+**Tiempo estimado:** 3 horas
 
 **Instrucciones:**
 
-- Configurar Swagger para documentar las rutas y métodos de la API.
-- Asegurar que la documentación incluya ejemplos de solicitudes y respuestas.
+- Implementa los endpoints diseñados en la fase anterior.
+- Asegura que la API interactúe con la base de datos H2 para la persistencia de los datos.
+- Documenta la API con Swagger, incluyendo descripciones de los endpoints, parámetros y respuestas.
 
-**Entregable:** API REST con documentación completa en Swagger.
+**Entregable:** API REST implementada y documentada con Swagger.
 
 <details>
 <summary>Pistas de conocimiento</summary>
 
-- Recuerda que la documentación debe ser clara y concisa.
-- Piensa en cómo puedes mejorar la experiencia del usuario con la documentación.
-
-</details>
-
-### Fase 4: Optimización y Refactorización de la API
-
-**Objetivo:** Optimizar y refactorizar la API para mejorar su rendimiento y mantenibilidad.
-
-**Tiempo estimado:** 2 horas
-
-**Instrucciones:**
-
-- Identificar y corregir posibles cuellos de botella en la API.
-- Refactorizar el código para mejorar su legibilidad y mantenibilidad.
-
-**Entregable:** API REST optimizada y refactorizada.
-
-<details>
-<summary>Pistas de conocimiento</summary>
-
-- Recuerda que la API debe manejar una carga de hasta 100 solicitudes por segundo con una latencia máxima de 200ms.
-- Piensa en cómo puedes mejorar la legibilidad y mantenibilidad del código.
+- Utiliza las anotaciones de Spring Boot para definir los endpoints y la persistencia.
+- Asegúrate de que la documentación con Swagger sea clara y completa.
 
 </details>
 
 ## Dimensiones Evaluadas
 
-- **queEs**: ¿Qué es un préstamo y cuáles son sus atributos?
-- **paraQueSirve**: ¿Para qué sirve la API REST en el sistema de gestión de préstamos?
-- **comoSeUsa**: ¿Cómo se utiliza la API REST para consultar y crear préstamos?
-- **erroresComunes**: ¿Cuáles son los errores comunes que pueden ocurrir al validar los atributos de un préstamo?
-- **queDecisionesImplica**: ¿Qué decisiones implica la optimización y refactorización de la API?
+- **queEs**: ¿Qué es una API REST y cuáles son sus principales características?
+- **paraQueSirve**: ¿Para qué sirve la API REST en el dominio de los préstamos?
+- **comoSeUsa**: ¿Cómo se usa la API REST para solicitar y aprobar préstamos?
+- **erroresComunes**: ¿Cuáles son los errores comunes en el dominio de los préstamos y cómo los maneja la API?
+- **queDecisionesImplica**: ¿Qué decisiones implica el diseño y la implementación de la API REST en el dominio de los préstamos?
 
 ## Criterios de Evaluacion
 
-- Definir el modelo de datos para los préstamos con validaciones.
-- Implementar la API REST que permite consultar y crear préstamos.
-- Documentar la API REST utilizando Swagger.
-- Optimizar y refactorizar la API para mejorar su rendimiento y mantenibilidad.
+- Identificación correcta de los actores, fuentes y sumideros del dominio.
+- Definición adecuada de los umbrales numéricos y propiedades operativas.
+- Diseño de endpoints idempotentes y manejo de errores en la API.
+- Implementación correcta de la API y documentación clara con Swagger.
 
 ## Como trabajar con un asistente de IA
 

@@ -14,18 +14,17 @@ Este bloque manda sobre los archivos adjuntos. El stack y el rol salen de AQUÍ,
 API REST con persistencia en H2 y documentación con Swagger
 
 ### Reto
-- Tema: Java Spring Boot REST API
-- Seniority: junior-l2
+- Tema: java-spring-boot-rest-api
+- Seniority: junior-l1
 - Tipo: practical
 - Título: Diseño y Desarrollo de una API REST en un Sistema de Gestión de Préstamos
 - Tiempo estimado: 8 horas
 
 ### Fases (trabajo del HUMANO — PROHIBIDO completarlas)
 No implementes estos entregables. Dejalos como hueco pedagógico. El asistente solo materializa el proyecto arrancable para que el participante pueda trabajar.
-- Fase 1: Definición del Modelo de Préstamo — objetivo: Definir el modelo de datos para los préstamos y sus validaciones. — entregable (NO resolver): Modelo de datos para préstamos con validaciones.
-- Fase 2: Implementación de la API REST — objetivo: Implementar la API REST que permite consultar y crear préstamos. — entregable (NO resolver): API REST funcional con persistencia en H2.
-- Fase 3: Documentación de la API con Swagger — objetivo: Documentar la API REST utilizando Swagger. — entregable (NO resolver): API REST con documentación completa en Swagger.
-- Fase 4: Optimización y Refactorización de la API — objetivo: Optimizar y refactorizar la API para mejorar su rendimiento y mantenibilidad. — entregable (NO resolver): API REST optimizada y refactorizada.
+- Fase 1: Definición del Dominio y Requisitos Funcionales — objetivo: Identificar los actores, fuentes y sumideros del dominio, así como las propiedades operativas y umbrales numéricos relevantes. — entregable (NO resolver): Documento que describe el dominio, los actores, las fuentes y sumideros, los umbrales numéricos y las propiedades operativas.
+- Fase 2: Diseño de la API REST — objetivo: Diseñar la estructura y endpoints de la API REST, asegurando idempotencia y manejo de errores. — entregable (NO resolver): Documento que describe los endpoints de la API, incluyendo la estructura de las solicitudes y respuestas, y el manejo de errores.
+- Fase 3: Implementación y Documentación de la API — objetivo: Implementar la API REST y documentarla con Swagger. — entregable (NO resolver): API REST implementada y documentada con Swagger.
 
 Eres un asistente experto en análisis, corrección y generación de archivos de cualquier tipo:
 código fuente, documentación, hojas de cálculo, documentos Word, configuraciones, entre otros.
@@ -161,161 +160,12 @@ El participante que recibirá este proyecto los debe encontrar y resolver él mi
 
 INPUT
 Aquí está la cadena con los archivos:
-// === ARCHIVO: pom.xml ===
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.example</groupId>
-    <artifactId>loan-management</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>Loan Management</name>
-    <description>Loan Management System</description>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-    <properties>
-        <java.version>21</java.version>
-    </properties>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-</project>
-// === ARCHIVO: src/main/java/com/example/loan/Loan.java ===
-package com.example.loan;
+// === ARCHIVO: src/main/java/com/example/loansystem/controller/LoanController.java ===
+package com.example.loansystem.controller;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-
-@Entity
-public class Loan {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @DecimalMin(value = "0.01", message = "El monto del préstamo debe ser mayor a cero.")
-    private Double amount;
-
-    @Min(value = 0, message = "La tasa de interés debe ser un valor entre 0 y 100.")
-    @Max(value = 100, message = "La tasa de interés debe ser un valor entre 0 y 100.")
-    private Double interestRate;
-
-    private String startDate;
-    private String endDate;
-    private String status;
-
-    // Getters and setters
-}
-// === ARCHIVO: src/main/java/com/example/loan/application/LoanService.java ===
-package com.example.loan.application;
-
-import com.example.loan.domain.Loan;
-import com.example.loan.infrastructure.LoanRepository;
-import org.springframework.stereotype.Service;
-import javax.validation.Valid;
-import java.util.List;
-
-@Service
-public class LoanService {
-    private final LoanRepository loanRepository;
-
-    public LoanService(LoanRepository loanRepository) {
-        this.loanRepository = loanRepository;
-    }
-
-    public List<Loan> getAllLoans() {
-        return loanRepository.findAll();
-    }
-
-    public Loan getLoanById(Long id) {
-        return loanRepository.findById(id).orElse(null);
-    }
-
-    public Loan createLoan(@Valid Loan loan) {
-        return loanRepository.save(loan);
-    }
-
-    public Loan updateLoan(Long id, @Valid Loan loan) {
-        Loan existingLoan = loanRepository.findById(id).orElse(null);
-        if (existingLoan!= null) {
-            existingLoan.setAmount(loan.getAmount());
-            existingLoan.setInterestRate(loan.getInterestRate());
-            existingLoan.setStartDate(loan.getStartDate());
-            existingLoan.setEndDate(loan.getEndDate());
-            existingLoan.setStatus(loan.getStatus());
-            return loanRepository.save(existingLoan);
-        }
-        return null;
-    }
-
-    public void deleteLoan(Long id) {
-        loanRepository.deleteById(id);
-    }
-}
-// === ARCHIVO: src/main/java/com/example/loan/infrastructure/LoanRepository.java ===
-package com.example.loan.infrastructure;
-
-import com.example.loan.domain.Loan;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface LoanRepository extends JpaRepository<Loan, Long> {
-}
-// === ARCHIVO: src/main/java/com/example/loan/infrastructure/LoanRepositoryImpl.java ===
-package com.example.loan.infrastructure;
-
-import com.example.loan.domain.Loan;
-import org.springframework.stereotype.Repository;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import java.util.List;
-
-@Repository
-public interface LoanRepositoryImpl extends JpaRepository<Loan, Long> {
-}
-// === ARCHIVO: src/main/java/com/example/loan/application/LoanController.java ===
-package com.example.loan.application;
-
-import com.example.loan.domain.Loan;
+import com.example.loansystem.dto.LoanRequestDTO;
+import com.example.loansystem.dto.LoanResponseDTO;
+import com.example.loansystem.service.LoanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -324,256 +174,455 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/loans")
-@Validated
 public class LoanController {
 
     @Autowired
     private LoanService loanService;
 
-    @Operation(summary = "Obtener todos los préstamos")
-    @GetMapping
-    public List<Loan> getAllLoans() {
-        return loanService.getAllLoans();
-    }
-
-    @Operation(summary = "Obtener préstamo por ID")
-    @GetMapping("/{id}")
-    public ResponseEntity<Loan> getLoanById(@PathVariable Long id) {
-        Loan loan = loanService.getLoanById(id);
-        if (loan!= null) {
-            return ResponseEntity.ok(loan);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @Operation(summary = "Crear un nuevo préstamo")
+    @Operation(summary = "Solicitar un préstamo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Préstamo solicitado con éxito", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoanResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida", content = @Content)
+    })
     @PostMapping
-    public ResponseEntity<Loan> createLoan(@Valid @RequestBody Loan loan) {
-        Loan createdLoan = loanService.createLoan(loan);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdLoan);
+    public ResponseEntity<LoanResponseDTO> applyLoan(@RequestBody LoanRequestDTO loanRequestDTO) {
+        LoanResponseDTO loanResponseDTO = loanService.applyLoan(loanRequestDTO);
+        return new ResponseEntity<>(loanResponseDTO, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Actualizar préstamo por ID")
+    @Operation(summary = "Consultar un préstamo por ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Préstamo encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoanResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Préstamo no encontrado", content = @Content)
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<LoanResponseDTO> getLoanById(@PathVariable Long id) {
+        LoanResponseDTO loanResponseDTO = loanService.getLoanById(id);
+        return new ResponseEntity<>(loanResponseDTO, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Actualizar un préstamo por ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Préstamo actualizado con éxito", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoanResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Préstamo no encontrado", content = @Content)
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<Loan> updateLoan(@PathVariable Long id, @Valid @RequestBody Loan loan) {
-        Loan updatedLoan = loanService.updateLoan(id, loan);
-        if (updatedLoan!= null) {
-            return ResponseEntity.ok(updatedLoan);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<LoanResponseDTO> updateLoan(@PathVariable Long id, @RequestBody LoanRequestDTO loanRequestDTO) {
+        LoanResponseDTO loanResponseDTO = loanService.updateLoan(id, loanRequestDTO);
+        return new ResponseEntity<>(loanResponseDTO, HttpStatus.OK);
     }
 
-    @Operation(summary = "Eliminar préstamo por ID")
+    @Operation(summary = "Eliminar un préstamo por ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Préstamo eliminado con éxito", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Préstamo no encontrado", content = @Content)
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLoan(@PathVariable Long id) {
         loanService.deleteLoan(id);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
-// === ARCHIVO: src/main/resources/application.properties ===
+
+// === ARCHIVO: src/main/java/com/example/loansystem/service/LoanService.java ===
+package com.example.loansystem.service;
+
+import com.example.loansystem.dto.LoanRequestDTO;
+import com.example.loansystem.dto.LoanResponseDTO;
+import com.example.loansystem.model.Loan;
+import com.example.loansystem.repository.LoanRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+@Service
+public class LoanService {
+
+    @Autowired
+    private LoanRepository loanRepository;
+
+    @Transactional
+    public LoanResponseDTO applyLoan(LoanRequestDTO loanRequestDTO) {
+        Loan loan = new Loan();
+        loan.setAmount(loanRequestDTO.getAmount());
+        loan.setInterestRate(loanRequestDTO.getInterestRate());
+        loan.setApplicationDate(loanRequestDTO.getApplicationDate());
+        loan.setStatus("pending");
+        loan = loanRepository.save(loan);
+        return convertToDTO(loan);
+    }
+
+    public LoanResponseDTO getLoanById(Long id) {
+        Optional<Loan> loan = loanRepository.findById(id);
+        return loan.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Loan not found"));
+    }
+
+    @Transactional
+    public LoanResponseDTO updateLoan(Long id, LoanRequestDTO loanRequestDTO) {
+        Optional<Loan> loan = loanRepository.findById(id);
+        if (loan.isPresent()) {
+            Loan updatedLoan = loan.get();
+            updatedLoan.setAmount(loanRequestDTO.getAmount());
+            updatedLoan.setInterestRate(loanRequestDTO.getInterestRate());
+            updatedLoan.setStatus(loanRequestDTO.getStatus());
+            loanRepository.save(updatedLoan);
+            return convertToDTO(updatedLoan);
+        } else {
+            throw new RuntimeException("Loan not found");
+        }
+    }
+
+    @Transactional
+    public void deleteLoan(Long id) {
+        loanRepository.deleteById(id);
+    }
+
+    private LoanResponseDTO convertToDTO(Loan loan) {
+        LoanResponseDTO loanResponseDTO = new LoanResponseDTO();
+        loanResponseDTO.setId(loan.getId());
+        loanResponseDTO.setAmount(loan.getAmount());
+        loanResponseDTO.setInterestRate(loan.getInterestRate());
+        loanResponseDTO.setApplicationDate(loan.getApplicationDate());
+        loanResponseDTO.setStatus(loan.getStatus());
+        return loanResponseDTO;
+    }
+}
+
+// === ARCHIVO: src/main/java/com/example/loansystem/repository/LoanRepository.java ===
+package com.example.loansystem.repository;
+
+import com.example.loansystem.model.Loan;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface LoanRepository extends JpaRepository<Loan, Long> {}
+
+// === ARCHIVO: src/main/java/com/example/loansystem/model/Loan.java ===
+package com.example.loansystem.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "loans")
+public class Loan {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private Double amount;
+
+    @Column(nullable = false)
+    private Double interestRate;
+
+    @Column(nullable = false)
+    private LocalDate applicationDate;
+
+    @Column(nullable = false)
+    private String status;
+
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public Double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(Double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    public LocalDate getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(LocalDate applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}
+
+// === ARCHIVO: src/main/resources/config/application.properties ===
 spring.datasource.url=jdbc:h2:mem:testdb
 spring.datasource.driverClassName=org.h2.Driver
 spring.datasource.username=sa
 spring.datasource.password=
 spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 spring.h2.console.enabled=true
-spring.jpa.show-sql=true
-spring.jpa.hibernate.ddl-auto=update
-// === ARCHIVO: src/test/java/com/example/loan/application/LoanServiceTest.java ===
-package com.example.loan.application;
+spring.h2.console.path=/h2-console
 
-import com.example.loan.domain.Loan;
-import com.example.loan.infrastructure.LoanRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
-@SpringBootTest
-public class LoanServiceTest {
-
-    @Mock
-    private LoanRepository loanRepository;
-
-    @InjectMocks
-    private LoanService loanService;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-    @Test
-    public void testGetAllLoans() {
-        Loan loan = new Loan();
-        loan.setId(1L);
-        loan.setAmount(1000.0);
-        loan.setInterestRate(5.0);
-        loan.setStartDate("2024-06-01");
-        loan.setEndDate("2024-06-30");
-        loan.setStatus("pendiente");
-        List<Loan> loanList = new ArrayList<>();
-        loanList.add(loan);
-        when(loanRepository.findAll()).thenReturn(loanList);
-        List<Loan> result = loanService.getAllLoans();
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    public void testGetLoanById() {
-        Loan loan = new Loan();
-        loan.setId(1L);
-        loan.setAmount(1000.0);
-        loan.setInterestRate(5.0);
-        loan.setStartDate("2024-06-01");
-        loan.setEndDate("2024-06-30");
-        loan.setStatus("pendiente");
-        when(loanRepository.findById(1L)).thenReturn(Optional.of(loan));
-        Loan result = loanService.getLoanById(1L);
-        assertEquals(1L, result.getId());
-    }
-
-    @Test
-    public void testCreateLoan() {
-        Loan loan = new Loan();
-        loan.setId(1L);
-        loan.setAmount(1000.0);
-        loan.setInterestRate(5.0);
-        loan.setStartDate("2024-06-01");
-        loan.setEndDate("2024-06-30");
-        loan.setStatus("pendiente");
-        when(loanRepository.save(loan)).thenReturn(loan);
-        Loan result = loanService.createLoan(loan);
-        assertEquals(1L, result.getId());
-    }
-
-    @Test
-    public void testUpdateLoan() {
-        Loan loan = new Loan();
-        loan.setId(1L);
-        loan.setAmount(1000.0);
-        loan.setInterestRate(5.0);
-        loan.setStartDate("2024-06-01");
-        loan.setEndDate("2024-06-30");
-        loan.setStatus("pendiente");
-        when(loanRepository.findById(1L)).thenReturn(Optional.of(loan));
-        when(loanRepository.save(loan)).thenReturn(loan);
-        Loan result = loanService.updateLoan(1L, loan);
-        assertEquals(1L, result.getId());
-    }
-
-    @Test
-    public void testDeleteLoan() {
-        doNothing().when(loanRepository).deleteById(1L);
-        loanService.deleteLoan(1L);
-        verify(loanRepository, times(1)).deleteById(1L);
-    }
-}
-// === ARCHIVO: src/main/resources/openapi.yaml ===
-openapi: 3.0.0
+// === ARCHIVO: src/main/resources/config/openapi.yaml ===
+openapi: 3.0.1
 info:
-  title: Loan Management API
-  description: API for managing loans
+  title: Loan System API
   version: 1.0.0
 paths:
   /api/loans:
-    get:
-      summary: Get all loans
-      operationId: getAllLoans
-      responses:
-        '200':
-          description: Successful operation
     post:
-      summary: Create a new loan
-      operationId: createLoan
+      summary: Solicitar un préstamo
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Loan'
+              $ref: '#/components/schemas/LoanRequestDTO'
       responses:
         '201':
-          description: Loan created
-  /api/loans/{id}:
+          description: Préstamo solicitado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanResponseDTO'
+        '400':
+          description: Solicitud inválida
     get:
-      summary: Get loan by ID
-      operationId: getLoanById
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
+      summary: Listar todos los préstamos
       responses:
         '200':
-          description: Successful operation
-        '404':
-          description: Loan not found
-    put:
-      summary: Update loan by ID
-      operationId: updateLoan
+          description: Lista de préstamos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LoanResponseDTO'
+  /api/loans/{id}:
+    get:
+      summary: Consultar un préstamo por ID
       parameters:
         - name: id
           in: path
           required: true
           schema:
-            type: integer
+            type: string
+      responses:
+        '200':
+          description: Préstamo encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanResponseDTO'
+        '404':
+          description: Préstamo no encontrado
+    put:
+      summary: Actualizar un préstamo por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Loan'
+              $ref: '#/components/schemas/LoanRequestDTO'
       responses:
         '200':
-          description: Loan updated
+          description: Préstamo actualizado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanResponseDTO'
         '404':
-          description: Loan not found
+          description: Préstamo no encontrado
     delete:
-      summary: Delete loan by ID
-      operationId: deleteLoan
+      summary: Eliminar un préstamo por ID
       parameters:
         - name: id
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         '204':
-          description: Loan deleted
+          description: Préstamo eliminado con éxito
+        '404':
+          description: Préstamo no encontrado
 components:
   schemas:
-    Loan:
+    LoanRequestDTO:
       type: object
       properties:
-        id:
-          type: integer
         amount:
           type: number
         interestRate:
           type: number
-        startDate:
+        applicationDate:
           type: string
-        endDate:
-          type: string
+          format: date
         status:
           type: string
+    LoanResponseDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: number
+        interestRate:
+          type: number
+        applicationDate:
+          type: string
+          format: date
+        status:
+          type: string
+
+// === ARCHIVO: src/main/java/com/example/loansystem/dto/LoanRequestDTO.java ===
+package com.example.loansystem.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import java.time.LocalDate;
+
+public class LoanRequestDTO {
+
+    @Schema(description = "Monto del préstamo", required = true)
+    @NotNull(message = "El monto es obligatorio")
+    @Positive(message = "El monto debe ser positivo")
+    private Double amount;
+
+    @Schema(description = "Tasa de interés del préstamo", required = true)
+    @NotNull(message = "La tasa de interés es obligatoria")
+    @Positive(message = "La tasa de interés debe ser positiva")
+    private Double interestRate;
+
+    @Schema(description = "Fecha de solicitud del préstamo", required = true)
+    @NotNull(message = "La fecha de solicitud es obligatoria")
+    private LocalDate applicationDate;
+
+    @Schema(description = "Estado del préstamo (pendiente, aprobado, rechazado)")
+    private String status;
+
+    // Getters and setters
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public Double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(Double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    public LocalDate getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(LocalDate applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}
+
+// === ARCHIVO: src/main/java/com/example/loansystem/dto/LoanResponseDTO.java ===
+package com.example.loansystem.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDate;
+
+public class LoanResponseDTO {
+
+    @Schema(description = "ID del préstamo")
+    private Long id;
+
+    @Schema(description = "Monto del préstamo")
+    private Double amount;
+
+    @Schema(description = "Tasa de interés del préstamo")
+    private Double interestRate;
+
+    @Schema(description = "Fecha de solicitud del préstamo")
+    private LocalDate applicationDate;
+
+    @Schema(description = "Estado del préstamo (pendiente, aprobado, rechazado)")
+    private String status;
+
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public Double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(Double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    public LocalDate getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(LocalDate applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}
 
 ```

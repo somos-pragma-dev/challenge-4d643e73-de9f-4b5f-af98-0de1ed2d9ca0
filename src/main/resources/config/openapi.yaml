@@ -1,0 +1,116 @@
+openapi: 3.0.1
+info:
+  title: Loan System API
+  version: 1.0.0
+paths:
+  /api/loans:
+    post:
+      summary: Solicitar un préstamo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanRequestDTO'
+      responses:
+        '201':
+          description: Préstamo solicitado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanResponseDTO'
+        '400':
+          description: Solicitud inválida
+    get:
+      summary: Listar todos los préstamos
+      responses:
+        '200':
+          description: Lista de préstamos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LoanResponseDTO'
+  /api/loans/{id}:
+    get:
+      summary: Consultar un préstamo por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Préstamo encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanResponseDTO'
+        '404':
+          description: Préstamo no encontrado
+    put:
+      summary: Actualizar un préstamo por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanRequestDTO'
+      responses:
+        '200':
+          description: Préstamo actualizado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanResponseDTO'
+        '404':
+          description: Préstamo no encontrado
+    delete:
+      summary: Eliminar un préstamo por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Préstamo eliminado con éxito
+        '404':
+          description: Préstamo no encontrado
+components:
+  schemas:
+    LoanRequestDTO:
+      type: object
+      properties:
+        amount:
+          type: number
+        interestRate:
+          type: number
+        applicationDate:
+          type: string
+          format: date
+        status:
+          type: string
+    LoanResponseDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: number
+        interestRate:
+          type: number
+        applicationDate:
+          type: string
+          format: date
+        status:
+          type: string
