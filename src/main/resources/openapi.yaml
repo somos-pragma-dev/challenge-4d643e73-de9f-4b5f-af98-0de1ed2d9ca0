@@ -1,0 +1,89 @@
+openapi: 3.0.0
+info:
+  title: Loan Management API
+  description: API for managing loans
+  version: 1.0.0
+paths:
+  /api/loans:
+    get:
+      summary: Get all loans
+      operationId: getAllLoans
+      responses:
+        '200':
+          description: Successful operation
+    post:
+      summary: Create a new loan
+      operationId: createLoan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Loan'
+      responses:
+        '201':
+          description: Loan created
+  /api/loans/{id}:
+    get:
+      summary: Get loan by ID
+      operationId: getLoanById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Loan not found
+    put:
+      summary: Update loan by ID
+      operationId: updateLoan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Loan'
+      responses:
+        '200':
+          description: Loan updated
+        '404':
+          description: Loan not found
+    delete:
+      summary: Delete loan by ID
+      operationId: deleteLoan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Loan deleted
+components:
+  schemas:
+    Loan:
+      type: object
+      properties:
+        id:
+          type: integer
+        amount:
+          type: number
+        interestRate:
+          type: number
+        startDate:
+          type: string
+        endDate:
+          type: string
+        status:
+          type: string
